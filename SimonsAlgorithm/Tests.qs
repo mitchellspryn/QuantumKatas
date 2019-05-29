@@ -9,21 +9,19 @@
 
 namespace Quantum.Kata.SimonsAlgorithm {
     
-    open Microsoft.Quantum.Intrinsic;
-    open Microsoft.Quantum.Canon;
     open Microsoft.Quantum.Diagnostics;
     
     
     // ------------------------------------------------------
     operation ApplyOracleA (qs : Qubit[], oracle : ((Qubit[], Qubit) => Unit is Adj)) : Unit
-	is Adj {        
+    is Adj {        
         let N = Length(qs);
         oracle(qs[0 .. N - 2], qs[N - 1]);
     }
     
     
     operation ApplyOracleWithOutputArrA (qs : Qubit[], oracle : ((Qubit[], Qubit[]) => Unit is Adj), outputSize : Int) : Unit
-	is Adj {
+    is Adj {
         let N = Length(qs);
         oracle(qs[0 .. (N - 1) - outputSize], qs[N - outputSize .. N - 1]);
     }

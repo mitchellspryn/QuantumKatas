@@ -42,7 +42,7 @@ ENV PATH=$PATH:${HOME}/dotnet:${HOME}/.dotnet/tools \
     DOTNET_ROOT=${HOME}/dotnet
 
 # install IQSharp
-RUN dotnet tool install -g Microsoft.Quantum.IQSharp 
+RUN dotnet tool install -g Microsoft.Quantum.IQSharp --version 0.6.1905.301
 RUN dotnet iqsharp install --user --path-to-tool="$(which dotnet-iqsharp)"
 
 # Make sure the contents of our repo are in ${HOME}
@@ -56,11 +56,14 @@ USER ${NB_USER}
 RUN dotnet build BasicGates
 RUN jupyter nbconvert BasicGates/BasicGates.ipynb --execute --stdout --to markdown  --allow-errors  --ExecutePreprocessor.timeout=120
 
-RUN dotnet build Superposition
-RUN jupyter nbconvert Superposition/Superposition.ipynb --execute --stdout --to markdown  --allow-errors  --ExecutePreprocessor.timeout=120
+RUN dotnet build CHSHGame
+RUN jupyter nbconvert CHSHGame/CHSHGame.ipynb --execute --stdout --to markdown  --allow-errors  --ExecutePreprocessor.timeout=120
+
+RUN dotnet build DeutschJozsaAlgorithm
+RUN jupyter nbconvert DeutschJozsaAlgorithm/DeutschJozsaAlgorithm.ipynb --execute --stdout --to markdown  --allow-errors  --ExecutePreprocessor.timeout=120
 
 RUN dotnet build Measurements
 RUN jupyter nbconvert Measurements/Measurements.ipynb --execute --stdout --to markdown  --allow-errors  --ExecutePreprocessor.timeout=120
 
-RUN dotnet build DeutschJozsaAlgorithm
-RUN jupyter nbconvert DeutschJozsaAlgorithm/DeutschJozsaAlgorithm.ipynb --execute --stdout --to markdown  --allow-errors  --ExecutePreprocessor.timeout=120
+RUN dotnet build Superposition
+RUN jupyter nbconvert Superposition/Superposition.ipynb --execute --stdout --to markdown  --allow-errors  --ExecutePreprocessor.timeout=120

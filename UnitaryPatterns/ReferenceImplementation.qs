@@ -14,7 +14,6 @@ namespace Quantum.Kata.UnitaryPatterns {
     open Microsoft.Quantum.Intrinsic;
     open Microsoft.Quantum.Canon;
     open Microsoft.Quantum.Convert;
-    open Microsoft.Quantum.Math;
     
     
     // Task 1. Main diagonal
@@ -80,7 +79,7 @@ namespace Quantum.Kata.UnitaryPatterns {
     
     // Task 10. Increasing blocks
     operation IncreasingBlocks_Reference (qs : Qubit[]) : Unit
-	is Adj + Ctl {
+    is Adj + Ctl {
 
         let N = Length(qs);
         // for N = 1, we need an identity
@@ -120,7 +119,7 @@ namespace Quantum.Kata.UnitaryPatterns {
     
     // Helper operation: antidiagonal 
     operation Reflect (qs : Qubit[]) : Unit
-	is Ctl {
+    is Ctl {
         ApplyToEachC(X, qs);
     }
     
@@ -170,11 +169,11 @@ namespace Quantum.Kata.UnitaryPatterns {
     // Helper function for Embed_2x2_Operator: performs a Clifford to implement a base change
     // that maps basis states index1 to 111...10 and index2 to 111...11 (in big endian notation, i.e., LSB in qs[n-1]) 
     operation Embedding_Perm (index1 : Int, index2 : Int, qs : Qubit[]) : Unit
-	is Adj {
+    is Adj {
 
         let n = Length(qs); 
-        let bits1 = BoolArrFromPositiveInt(index1, n);
-        let bits2 = BoolArrFromPositiveInt(index2, n);
+        let bits1 = IntAsBoolArray(index1, n);
+        let bits2 = IntAsBoolArray(index2, n);
         // find the index of the first bit at which the bit strings are different
         let diff = FirstDiff(bits1, bits2);
 
@@ -225,7 +224,7 @@ namespace Quantum.Kata.UnitaryPatterns {
     // Putting everything together: the target pattern is produced by a sequence of controlled H gates. 
     operation Hessenberg_Matrix_Reference (qs : Qubit[]) : Unit {
         let n = Length(qs);
-        for (i in 2^n-2..-1..0) { 	
+        for (i in 2^n-2..-1..0) {     
             Embed_2x2_Operator(H, i, i+1, qs);
         }
     }

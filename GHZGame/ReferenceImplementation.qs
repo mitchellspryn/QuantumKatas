@@ -10,6 +10,7 @@
 
 namespace Quantum.Kata.GHZGame {
 
+    open Microsoft.Quantum.Convert;
     open Microsoft.Quantum.Math;
     open Microsoft.Quantum.Canon;
     open Microsoft.Quantum.Intrinsic;
@@ -54,7 +55,7 @@ namespace Quantum.Kata.GHZGame {
 
     // Task 2.1. Entangled triple
     operation CreateEntangledTriple_Reference (qs : Qubit[]) : Unit
-	is Adj {
+    is Adj {
         X(qs[0]);
         X(qs[1]);
 
@@ -76,7 +77,7 @@ namespace Quantum.Kata.GHZGame {
         if (input) {
             H(qubit);
         }
-        return BoolFromResult(M(qubit));
+        return ResultAsBool(M(qubit));
     }
 
 
@@ -85,14 +86,14 @@ namespace Quantum.Kata.GHZGame {
 
         using (qs = Qubit[3]) {
             CreateEntangledTriple_Reference(qs);
-			
-			mutable abc = new Bool[3];
+            
+            mutable abc = new Bool[3];
             for (i in 0..2) {
                 set abc w/= i <- strategies[i](qs[i]);
             }
 
             ResetAll(qs);
-			return abc;
+            return abc;
         }
     }
 

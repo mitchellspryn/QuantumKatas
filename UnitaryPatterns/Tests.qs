@@ -14,7 +14,6 @@ namespace Quantum.Kata.UnitaryPatterns {
     open Microsoft.Quantum.Canon;
     open Microsoft.Quantum.Diagnostics;
     open Microsoft.Quantum.Convert;
-    open Microsoft.Quantum.Math;
     
     
     // ------------------------------------------------------
@@ -32,7 +31,7 @@ namespace Quantum.Kata.UnitaryPatterns {
         using (qs = Qubit[N]) {
             for (k in 0 .. size - 1) {                
                 // Prepare k-th basis vector
-                let binary = BoolArrFromPositiveInt(k, N);
+                let binary = IntAsBoolArray(k, N);
                 
                 //Message($"{k}/{N} = {binary}");
                 // binary is little-endian notation, so the second vector tried has qubit 0 in state 1 and the rest in state 0
@@ -45,15 +44,15 @@ namespace Quantum.Kata.UnitaryPatterns {
                 op(qs);
                 
                 // Make sure the solution didn't use any measurements
-                EqualityFactI(GetOracleCallsCount(M), 0, "You are not allowed to use measurements in this task");
-                EqualityFactI(GetOracleCallsCount(Measure), 0, "You are not allowed to use measurements in this task");
+                Fact(GetOracleCallsCount(M) == 0, "You are not allowed to use measurements in this task");
+                Fact(GetOracleCallsCount(Measure) == 0, "You are not allowed to use measurements in this task");
 
                 // Test that the result matches the k-th column
                 // DumpMachine($"C:/Tmp/dump{N}_{k}.txt");
                 for (j in 0 .. size - 1) {                    
                     let nonZero = pattern(size, j, k);
                     
-					let (expected, tol) = nonZero ? (0.5 + ε, 0.5) | (0.0, ε);
+                    let (expected, tol) = nonZero ? (0.5 + ε, 0.5) | (0.0, ε);
                     AssertProbInt(j, expected, LittleEndian(qs), tol);
                 }
                 
@@ -281,7 +280,7 @@ namespace Quantum.Kata.UnitaryPatterns {
                   [ false, false, true, false, false, true, false, false], 
                   [ true, true, false, false, false, false, true, true], 
                   [ true, true, false, false, false, false, true, true] ];
-        return size != 8 ? false | A[row][col]; 		
+        return size != 8 ? false | A[row][col];         
     }
     
 

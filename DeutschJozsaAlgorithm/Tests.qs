@@ -9,8 +9,7 @@
 
 namespace Quantum.Kata.DeutschJozsaAlgorithm {
     
-    open Microsoft.Quantum.Intrinsic;
-    open Microsoft.Quantum.Canon;
+    open Microsoft.Quantum.Convert;
     open Microsoft.Quantum.Diagnostics;
 
     open Quantum.Kata.Utils;
@@ -25,7 +24,7 @@ namespace Quantum.Kata.DeutschJozsaAlgorithm {
     
     // ------------------------------------------------------
     operation ApplyOracleA (qs : Qubit[], oracle : ((Qubit[], Qubit) => Unit is Adj)) : Unit
-	is Adj {        
+    is Adj {        
         let N = Length(qs);
         oracle(qs[0 .. N - 2], qs[N - 1]);
     }
@@ -107,9 +106,7 @@ namespace Quantum.Kata.DeutschJozsaAlgorithm {
         
         // the mask with only the K-th element set to 1 corresponds to Oracle_Kth_Qubit
         for (i in 0 .. L - 1) {
-            set r w/= i <- 1;
-            AssertTwoOraclesAreEqual(L .. L, Oracle_ProductFunction(_, _, r), Oracle_Kth_Qubit_Reference(_, _, i));
-            set r w/= i <- 0;
+            AssertTwoOraclesAreEqual(L .. L, Oracle_ProductFunction(_, _, r w/ i <- 1), Oracle_Kth_Qubit_Reference(_, _, i));
         }
         
         set r = [1, 0, 1, 0, 1, 0];
@@ -198,7 +195,7 @@ namespace Quantum.Kata.DeutschJozsaAlgorithm {
     // ------------------------------------------------------
     function IntArrFromPositiveInt (n : Int, bits : Int) : Int[] {
         
-        let rbool = BoolArrFromPositiveInt(n, bits);
+        let rbool = IntAsBoolArray(n, bits);
         mutable r = new Int[bits];
         
         for (i in 0 .. bits - 1) {

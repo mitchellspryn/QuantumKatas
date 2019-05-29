@@ -18,7 +18,6 @@ namespace Quantum.Kata.PhaseEstimation {
     open Microsoft.Quantum.Canon;
     open Microsoft.Quantum.Diagnostics;
     open Microsoft.Quantum.Convert;
-    open Microsoft.Quantum.Math;
     
     
     //////////////////////////////////////////////////////////////////
@@ -27,7 +26,7 @@ namespace Quantum.Kata.PhaseEstimation {
     
     // Task 1.1. Inputs to QPE: eigenstates of Z/S/T gates.
     operation Eigenstates_ZST_Reference (q : Qubit, state : Int) : Unit
-	is Adj {
+    is Adj {
         
         if (state == 1) {
             X(q);
@@ -37,7 +36,7 @@ namespace Quantum.Kata.PhaseEstimation {
 
     // ------------------------------------------------------
     operation UnitaryPowerImpl_Reference (U : (Qubit => Unit is Adj + Ctl), power : Int, q : Qubit) : Unit
-	is Adj + Ctl {
+    is Adj + Ctl {
         for (i in 1..power) {
             U(q);
         }
@@ -67,7 +66,7 @@ namespace Quantum.Kata.PhaseEstimation {
 
     // ------------------------------------------------------
     operation Oracle_Reference (U : (Qubit => Unit is Adj + Ctl), power : Int, target : Qubit[]) : Unit 
-	is Adj + Ctl{
+    is Adj + Ctl{
         for (i in 1 .. power) {
             U(target[0]);
         }
@@ -89,7 +88,7 @@ namespace Quantum.Kata.PhaseEstimation {
 
             ResetAll(eigenstate);
             ResetAll(phaseRegister);
-			return phase;
+            return phase;
         }
     }
 
@@ -110,7 +109,7 @@ namespace Quantum.Kata.PhaseEstimation {
 
             let eigenvalue = M(control) == Zero ? 1 | -1;
             ResetAll([control, eigenstate]);
-			return eigenvalue;
+            return eigenvalue;
         }
     }
 
@@ -128,14 +127,14 @@ namespace Quantum.Kata.PhaseEstimation {
             mutable (measuredZero, measuredOne) = (false, false); 
             mutable iter = 0;
             repeat {
-				set iter += 1;
+                set iter += 1;
 
                 H(control);
                 Controlled U([control], eigenstate);
                 H(control);
 
                 let meas = MResetZ(control);
-                set (measuredZero, measuredOne) = (meas == Zero, meas == One);
+                set (measuredZero, measuredOne) = (measuredZero or meas == Zero, measuredOne or meas == One);
             } 
             // repeat the loop until we get both Zero and One measurement outcomes
             // or until we're reasonably certain that we won't get a different outcome
@@ -143,8 +142,8 @@ namespace Quantum.Kata.PhaseEstimation {
             fixup {}
             Reset(eigenstate);
 
-			// all measurements yielded Zero => eigenvalue +1
-			// all measurements yielded One => eigenvalue -1
+            // all measurements yielded Zero => eigenvalue +1
+            // all measurements yielded One => eigenvalue -1
             if (not measuredZero or not measuredOne) {
                 return measuredOne ? 0.5 | 0.0;
             }
