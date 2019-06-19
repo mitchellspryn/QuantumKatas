@@ -4,7 +4,6 @@
 namespace Quantum.Kata.SuperdenseCoding {
     
     open Microsoft.Quantum.Intrinsic;
-    open Microsoft.Quantum.Measurement;
     
     /// # Summary
     /// Data type that represents the message that is transmitted 
@@ -45,9 +44,10 @@ namespace Quantum.Kata.SuperdenseCoding {
     // Task 1. Entangled pair
     // Input: An array of two qubits in the |00⟩ state.
     // Goal:  Create a Bell state |Φ⁺⟩ = (|00⟩ + |11⟩) / sqrt(2) on these qubits.
-    operation CreateEntangledPair (q1 : Qubit, q2 : Qubit) : Unit is Adj {
+    operation EntangleQubits (qAlice : Qubit, qBob : Qubit) : Unit is Adj {
 
-        // ...
+        H (qAlice);
+		CNOT (qAlice, qBob);
     }
     
     
@@ -57,7 +57,7 @@ namespace Quantum.Kata.SuperdenseCoding {
     //      1) Alice's part of the entangled pair of qubits qAlice.
     //      2) two classical bits, stored as Message.
     // Goal: Transform the input qubit to encode the two classical bits.
-    operation EncodeMessageInQubit (qAlice : Qubit, message : Message) : Unit {
+    operation EncodeMessageInQubit (q : Qubit, message : Message) : Unit {
         // Hint: manipulate Alice's half of the entangled pair
         // to change the joint state of the two qubits to one of the following four states
         // based on the value of message:
@@ -66,7 +66,12 @@ namespace Quantum.Kata.SuperdenseCoding {
         // [1; 0]:    |Φ⁻⟩ = (|00⟩ - |11⟩) / sqrt(2)
         // [1; 1]:    |Ψ⁻⟩ = (|01⟩ - |10⟩) / sqrt(2)
 
-        // ...
+        if (message::Bit1) {
+			Z (q);
+		}
+		if (message::Bit2) {
+			X (q);
+		}
     }
     
     
@@ -78,8 +83,11 @@ namespace Quantum.Kata.SuperdenseCoding {
     // Goal:  Retrieve two bits of classic data from the qubits.
     // The state of the qubits in the end of the operation should be |00⟩.
     operation DecodeMessageFromQubits (qAlice : Qubit, qBob : Qubit) : Message {
+		// Hint: decode the transmitted message 
+		// by undoing the entangling operation: 
 
-        fail ("not implemented");
+		// ...
+        return Message(M(qAlice) == One, M(qBob) == One);
     }
     
     

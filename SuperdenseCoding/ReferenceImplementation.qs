@@ -15,7 +15,7 @@ namespace Quantum.Kata.SuperdenseCoding {
     
     
     // Task 1. Entangled pair
-    operation CreateEntangledPair_Reference (q1 : Qubit, q2 : Qubit) : Unit is Adj {
+    operation EntangleQubits_Reference (q1 : Qubit, q2 : Qubit) : Unit is Adj {
         
         // The easiest way to create an entangled pair is to start with
         // applying a Hadamard transformation to one of the qubits:
@@ -64,7 +64,7 @@ namespace Quantum.Kata.SuperdenseCoding {
         // subject to the Hadamard transform and the CNOT gate in the preparation
         // of the pair have to match the operations below, or the order of the data
         // bits will get flipped.
-        Adjoint CreateEntangledPair_Reference(qAlice, qBob);
+        Adjoint EntangleQubits_Reference(qAlice, qBob);
         
         // What is the outcome of this transformation, assuming each of the possible
         // quantum states after the encoding step?
@@ -86,7 +86,7 @@ namespace Quantum.Kata.SuperdenseCoding {
         using ((q1, q2) = (Qubit(), Qubit())) {
             // STEP 1:
             // Start by creating an entangled pair of qubits.
-            CreateEntangledPair_Reference(q1, q2);
+            EntangleQubits_Reference(q1, q2);
             
             // Alice and Bob receive one half of the pair each.
             

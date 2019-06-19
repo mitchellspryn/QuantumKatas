@@ -15,14 +15,14 @@ namespace Quantum.Kata.SuperdenseCoding {
     
     // ------------------------------------------------------
         
-    operation T1_CreateEntangledPair_Test () : Unit {
+    operation T1_EntangleQubits_Test () : Unit {
         using ((q1,q2) = (Qubit(), Qubit())) {
 
             // apply operation that needs to be tested
-            CreateEntangledPair(q1, q2);
+            EntangleQubits(q1, q2);
 
             // apply adjoint reference operation and check that the result is |0^N⟩
-            Adjoint CreateEntangledPair_Reference(q1, q2);
+            Adjoint EntangleQubits_Reference(q1, q2);
 
             // assert that all qubits end up in |0⟩ state
             AssertAllZero([q1,q2]);
@@ -36,7 +36,7 @@ namespace Quantum.Kata.SuperdenseCoding {
     operation ComposeProtocol (encodeOp : ((Qubit, Message) => Unit), decodeOp : ((Qubit, Qubit) => Message), message : Message) : Message {
         
         using (qs = Qubit[2]) {
-            CreateEntangledPair_Reference(qs[0], qs[1]);
+            EntangleQubits_Reference(qs[0], qs[1]);
             encodeOp(qs[0], message);
             return decodeOp(qs[0], qs[1]);            
         }
