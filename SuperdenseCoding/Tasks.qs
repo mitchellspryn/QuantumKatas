@@ -86,7 +86,7 @@ namespace Quantum.Kata.SuperdenseCoding {
 		// Hint: decode the transmitted message 
 		// by undoing the entangling operation: 
 
-		// ...
+		Adjoint EntangleQubits(qAlice, qBob);
         return Message(M(qAlice) == One, M(qBob) == One);
     }
     
