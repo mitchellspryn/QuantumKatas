@@ -4,7 +4,7 @@
 FROM mcr.microsoft.com/quantum/iqsharp-base:0.8.1907.1701
 
 # Add metadata indicating that this image is used for the katas.
-ENV IQSHARP_HOSTING_ENV=KATAS_DOCKERFILE
+ENV IQSHARP_HOSTING_ENV=stanford-workshop
 
 # Make sure the contents of our repo are in ${HOME}
 # Required for mybinder.org
