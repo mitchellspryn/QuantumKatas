@@ -128,11 +128,6 @@ namespace Quantum.Kata.Superposition {
         // Hint: N can be found as Length(qs).
         H(qs[0]);
 
-        // Not sure why this doesn't work
-        //for (i in 1 .. Length(qs)) {
-        //    CNOT(qs[0], qs[i]);
-        //}
-
         for (q in Rest(qs)) {
             CNOT(qs[0], q);
         }
@@ -164,7 +159,11 @@ namespace Quantum.Kata.Superposition {
     // Input: 2 qubits in |00⟩ state
     // Goal: create the state (3|00⟩ + |01⟩ + |10⟩ + |11⟩) / sqrt(12) on these qubits.
     operation Hardy_State (qs : Qubit[]) : Unit {
-        // ...
+        let theta = ArcCos(Sqrt(10.0 / 12.0));
+        Ry(2.0 * theta, qs[0]);
+
+        (ControlledOnInt(0, Ry))([qs[0]], (2.0 * ArcCos(3.0 / Sqrt(10.0)), qs[1]));
+        (ControlledOnInt(1, Ry))([qs[0]], (2.0 * ArcCos(1.0 / Sqrt(2.0)), qs[1]));
     }
 
     // Task 12. Superposition of |0...0⟩ and given bit string
@@ -182,7 +181,13 @@ namespace Quantum.Kata.Superposition {
         EqualityFactI(Length(bits), Length(qs), "Arrays should have the same length");
         EqualityFactB(bits[0], true, "First bit of the input bit string should be set to true");
 
-        // ...
+        H(qs[0]);
+
+        for (i in 1 .. Length(qs) - 1) {
+            if (bits[i]) {
+                CNOT(qs[0], qs[i]);
+            }
+        }
     }
 
 
@@ -198,7 +203,33 @@ namespace Quantum.Kata.Superposition {
     // You are guaranteed that the both bit strings have the same length as the qubit array,
     // and that the bit strings will differ in at least one bit.
     operation TwoBitstringSuperposition (qs : Qubit[], bits1 : Bool[], bits2 : Bool[]) : Unit {
-        // ...
+        let diffIdx = FindFirstDiff(bits1, bits2);
+
+        H(qs[diffIdx]);
+
+        for (i in 0 .. Length(qs) - 1) {
+            if (bits1[i] == bits2[i]) {
+                if (bits1[i]) {
+                    X(qs[i]);
+                }
+            } elif (i > diffIdx) {
+                CNOT(qs[diffIdx], qs[i]);
+                if (bits1[i] != bits1[diffIdx]) {
+                    X(qs[i]);
+                }
+            }
+        }
+    }
+
+    function FindFirstDiff(bits1 : Bool[], bits2: Bool[]) : Int {
+        mutable diffIdx = -1;
+        for (i in 0 .. Length(bits1) - 1) {
+            if (bits1[i] != bits2[i] and diffIdx < 0) {
+                set diffIdx = i;
+            }
+        }
+
+        return diffIdx;
     }
 
 
