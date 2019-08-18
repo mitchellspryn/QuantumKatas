@@ -4,6 +4,8 @@
 namespace Quantum.Kata.Superposition {
 
     open Microsoft.Quantum.Diagnostics;
+    open Microsoft.Quantum.Arrays;
+    open Microsoft.Quantum.Measurement;
     open Microsoft.Quantum.Intrinsic;
     open Microsoft.Quantum.Canon;
     open Microsoft.Quantum.Convert;
@@ -32,11 +34,7 @@ namespace Quantum.Kata.Superposition {
     // Input: a qubit in the |0⟩ state.
     // Goal: prepare a |+⟩ state on this qubit (|+⟩ = (|0⟩ + |1⟩) / sqrt(2)).
     operation PlusState (q : Qubit) : Unit {
-        // Hadamard gate H will convert |0⟩ state to |+⟩ state.
-        // Type the following: H(q);
-        // Then rebuild the project and rerun the tests - T01_PlusState_Test should now pass!
-
-        // ...
+        H(q);
     }
 
 
@@ -44,9 +42,8 @@ namespace Quantum.Kata.Superposition {
     // Input: a qubit in the |0⟩ state.
     // Goal: prepare a |-⟩ state on this qubit (|-⟩ = (|0⟩ - |1⟩) / sqrt(2)).
     operation MinusState (q : Qubit) : Unit {
-        // In this task, as well as in all subsequent ones, you have to come up with the solution yourself.
-
-        // ...
+        H(q);
+        Z(q);
     }
 
 
@@ -56,10 +53,7 @@ namespace Quantum.Kata.Superposition {
     //      2) angle alpha, in radians, represented as Double.
     // Goal: prepare a cos(alpha) * |0⟩ + sin(alpha) * |1⟩ state on this qubit.
     operation UnequalSuperposition (q : Qubit, alpha : Double) : Unit {
-        // Hint: Experiment with rotation gates from the Microsoft.Quantum.Intrinsic namespace.
-        // Note that all rotation operators rotate the state by _half_ of its angle argument.
-
-        // ...
+        Ry(2.0 * alpha, q);
     }
 
 
@@ -71,7 +65,8 @@ namespace Quantum.Kata.Superposition {
         // You don't need to modify them. Feel free to remove them, this won't cause your code to fail.
         EqualityFactI(Length(qs), 2, "The array should have exactly 2 qubits.");
 
-        // ...
+        H(qs[0]);
+        H(qs[1]);
     }
 
 
@@ -83,8 +78,14 @@ namespace Quantum.Kata.Superposition {
         // You don't need to modify them. Feel free to remove them, this won't cause your code to fail.
         EqualityFactI(Length(qs), 2, "The array should have exactly 2 qubits.");
 
-        // Hint: Is this state separable?
-        // ...
+        // State is separable.
+        // Set first qbit into |->
+        H(qs[0]);
+        Z(qs[0]);
+
+        // Set second qbit into |0> + i|1>
+        H(qs[1]);
+        S(qs[1]);
     }
 
 
@@ -92,7 +93,8 @@ namespace Quantum.Kata.Superposition {
     // Input: two qubits in |00⟩ state (stored in an array of length 2).
     // Goal: create a Bell state |Φ⁺⟩ = (|00⟩ + |11⟩) / sqrt(2) on these qubits.
     operation BellState (qs : Qubit[]) : Unit {
-        // ...
+        H(qs[0]);
+        CNOT(qs[0], qs[1]);
     }
 
 
@@ -106,7 +108,16 @@ namespace Quantum.Kata.Superposition {
     //       2: |Ψ⁺⟩ = (|01⟩ + |10⟩) / sqrt(2)
     //       3: |Ψ⁻⟩ = (|01⟩ - |10⟩) / sqrt(2)
     operation AllBellStates (qs : Qubit[], index : Int) : Unit {
-        // ...
+        H(qs[0]);
+        CNOT(qs[0], qs[1]);
+
+        if (index % 2 != 0) {
+            Z(qs[1]);
+        }
+
+        if (index > 1) {
+            X(qs[1]);
+        }
     }
 
 
@@ -115,8 +126,16 @@ namespace Quantum.Kata.Superposition {
     // Goal: create a GHZ state (|0...0⟩ + |1...1⟩) / sqrt(2) on these qubits.
     operation GHZ_State (qs : Qubit[]) : Unit {
         // Hint: N can be found as Length(qs).
+        H(qs[0]);
 
-        // ...
+        // Not sure why this doesn't work
+        //for (i in 1 .. Length(qs)) {
+        //    CNOT(qs[0], qs[i]);
+        //}
+
+        for (q in Rest(qs)) {
+            CNOT(qs[0], q);
+        }
     }
 
 
@@ -125,7 +144,9 @@ namespace Quantum.Kata.Superposition {
     // Goal: create an equal superposition of all basis vectors from |0...0⟩ to |1...1⟩
     // (i.e. state (|0...0⟩ + ... + |1...1⟩) / sqrt(2^N) ).
     operation AllBasisVectorsSuperposition (qs : Qubit[]) : Unit {
-        // ...
+        for (q in qs) {
+            H(q);
+        }
     }
 
 
@@ -133,7 +154,10 @@ namespace Quantum.Kata.Superposition {
     // Input: 2 qubits in |00⟩ state.
     // Goal: create the state (|00⟩ + |01⟩ + |10⟩) / sqrt(3) on these qubits.
     operation ThreeStates_TwoQubits (qs : Qubit[]) : Unit {
-        // ...
+        let theta = ArcSin(1.0 / Sqrt(3.0));
+        Ry(2.0 * theta, qs[0]);
+
+        (ControlledOnInt(0, H))([qs[0]], qs[1]);
     }
 
     // Task 11*. Hardy State
