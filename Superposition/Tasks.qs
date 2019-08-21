@@ -246,9 +246,28 @@ namespace Quantum.Kata.Superposition {
     // Example: for N = 3 and bits = [[false, true, false], [true, false, false], [false, false, true], [true, true, false]]
     //          the state you need to prepare is (|010⟩ + |100⟩ + |001⟩ + |110⟩) / 2.
     operation FourBitstringSuperposition (qs : Qubit[], bits : Bool[][]) : Unit {
-        // Hint: remember that you can allocate extra qubits.
+        using (extraBits = Qubit[2]) {
+            H(extraBits[0]);
+            H(extraBits[1]);
 
-        // ...
+            for (i in 0 .. 3) {
+                for (j in 0 .. Length(qs) - 1) {
+                    if (bits[i][j]) {
+                        (ControlledOnInt(i, X))(extraBits, qs[j]);
+                    }
+                }
+            }
+
+            // Need to reset the allocated qbits
+            for (i in 0 .. 3 ) {
+                if (i / 2 == 1) {
+                    (ControlledOnBitString(bits[i], X))(qs, extraBits[1]);
+                }
+                if (i % 2 == 1) {
+                    (ControlledOnBitString(bits[i], X))(qs, extraBits[0]);
+                }
+            }
+        }
     }
 
 
@@ -258,9 +277,23 @@ namespace Quantum.Kata.Superposition {
     // W state is an equal superposition of all basis states on N qubits of Hamming weight 1.
     // Example: for N = 4, W state is (|1000⟩ + |0100⟩ + |0010⟩ + |0001⟩) / 2.
     operation WState_PowerOfTwo (qs : Qubit[]) : Unit {
-        // Hint: you can use Controlled modifier to perform arbitrary controlled gates.
+        let len = Length(qs);
+        if (len == 1) {
+            X(qs[0]);
+        } else {
+            let halfLen = len / 2;
+            WState_PowerOfTwo(qs[0 .. halfLen - 1]);
 
-        // ...
+            using (extraBit = Qubit()) {
+                H(extraBit);
+                for (i in 0 .. halfLen - 1) {
+                    Controlled SWAP([extraBit], (qs[i], qs[i + halfLen]));
+                }
+                for (i in halfLen .. len - 1) {
+                    CNOT(qs[i], extraBit);
+                }
+            }
+        }
     }
 
 
@@ -270,6 +303,17 @@ namespace Quantum.Kata.Superposition {
     // W state is an equal superposition of all basis states on N qubits of Hamming weight 1.
     // Example: for N = 3, W state is (|100⟩ + |010⟩ + |001⟩) / sqrt(3).
     operation WState_Arbitrary (qs : Qubit[]) : Unit {
-        // ...
+      let N = Length(qs);
+
+        if (N == 1) {
+            X(qs[0]);
+        } else {
+            let theta = ArcSin(1.0 / Sqrt(IntAsDouble(N)));
+            Ry(2.0 * theta, qs[0]);
+
+            X(qs[0]);
+            Controlled WState_Arbitrary_Reference(qs[0 .. 0], qs[1 .. N - 1]);
+            X(qs[0]);
+        }
     }
 }
